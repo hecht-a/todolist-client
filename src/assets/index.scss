@@ -1,0 +1,444 @@
+@import "root";
+
+:root {
+  font-family: MonoLisa, sans-serif;
+}
+
+a {
+  color: $snow-3 !important;
+}
+
+html {
+  box-sizing: border-box;
+  background: $grey-1;
+}
+
+html, body {
+  height: 100%;
+}
+
+.link {
+  color: $snow-3;
+  text-decoration: none;
+  margin-top: 1em;
+  align-self: flex-end;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+.todolist, .form {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  align-self: center;
+}
+
+button, .button {
+  font-family: MonoLisa, sans-serif;
+  text-transform: uppercase;
+  padding: 7px;
+  font-size: 15px;
+  border-radius: 10px;
+  border: 1px solid $snow-1;
+  color: $snow-1;
+}
+
+button {
+  cursor: pointer;
+}
+
+.title {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid $grey-4;
+  padding-bottom: 1em;
+  margin-bottom: 1em;
+}
+
+.delete-todo {
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: $red;
+
+  &::before {
+    position: relative;
+    top: -3px;
+    content: "✗";
+    font-size: 20px;
+  }
+}
+
+.header {
+  color: $snow-3;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  height: $header__height;
+  border-bottom: 2px solid $grey-4;
+  padding: $header__spacing;
+  margin-bottom: $header__spacing;
+  gap: $header__spacing;
+
+  a {
+    color: $snow-3;
+    text-decoration: none;
+  }
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  color: $snow-3;
+  height: $container__height;
+  overflow-y: hidden;
+
+  div {
+    .btn {
+      font-family: MonoLisa, sans-serif;
+      text-transform: uppercase;
+      padding: 7px;
+      border-radius: 10px;
+      border: 1px solid $snow-1;
+      color: $snow-1;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 20px;
+
+      &:active, &:hover {
+        background: $frost-4;
+      }
+    }
+  }
+
+  .error {
+    text-align: center;
+  }
+
+  .categories {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 5px;
+
+    .button_cat_container {
+      display: flex;
+      gap: 10px;
+
+      .button {
+        background: $frost-2;
+        color: $grey-4;
+        border-color: $grey-4;
+      }
+
+      button {
+        &:active {
+          background: $frost-4;
+        }
+      }
+    }
+
+    .category, .delete-category {
+      &:active {
+        background: $grey-3;
+      }
+    }
+
+    .category {
+      background: $grey-4;
+    }
+
+    .delete-category {
+      background: $red;
+    }
+  }
+
+  .app-title {
+    color: $snow-1;
+    font-size: 30px;
+    text-transform: uppercase;
+  }
+
+  .app-subtitle {
+    color: $snow-1;
+    text-align: center;
+    font-size: 20px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .list {
+    display: flex;
+    flex-direction: column;
+
+    .todo-list-sorted {
+      max-height: 15vh;
+    }
+
+    .todo-list-unsorted {
+       max-height: 40vh;
+     }
+
+    .form__btn {
+      align-self: flex-end;
+      margin: 1em 0;
+      font-size: 15px;
+
+      .sort {
+        background: $grey-4;
+
+        &:active {
+          background: $grey-3;
+        }
+
+        &::after {
+          margin-left: 5px;
+          content: "❌";
+        }
+      }
+
+      .sorted {
+        &::after {
+          margin-left: 5px;
+          content: "✔️";
+        }
+      }
+    }
+
+    .empty-state {
+      display: flex;
+    }
+
+    .todo-list {
+      padding: 10px;
+      list-style: none;
+      margin-bottom: 20px;
+      overflow-y: auto;
+    }
+  }
+
+  .empty-state {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    display: none;
+    margin-top: 10px;
+    text-align: center;
+
+    .empty-state__title, .empty-state__description {
+      margin-bottom: 20px;
+    }
+  }
+
+  .add-task {
+    color: $grey-1;
+  }
+
+  .modal {
+    z-index: 10;
+    background: rgba(76, 86, 106, 0.8);
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+  }
+
+  .form__task__container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 10em;
+    left: 10em;
+    bottom: 10em;
+    right: 10em;
+    z-index: 10;
+    background: $grey-2;
+    border-radius: 10px;
+
+    .modal__title {
+      text-align: center;
+    }
+
+    .close__modal {
+      position: absolute;
+      top: 0;
+      right: 5px;
+      background: transparent;
+      border: none;
+      color: $red;
+      font-size: 30px;
+    }
+  }
+
+  [data-visible="false"] {
+    display: none;
+  }
+
+  .form__task {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .add__task, .show__modal {
+     margin: 1em;
+     color: $grey-1;
+   }
+
+  .form__group {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    padding: 15px 0 0;
+    margin-top: 10px;
+
+    .form__field {
+      font-family: inherit;
+      width: 100%;
+      border: 0;
+      border-bottom: 2px solid $grey-4;
+      outline: 0;
+      font-size: 1.3rem;
+      color: $snow-3;
+      padding: 7px 0;
+      background: transparent;
+      transition: border-color 0.2s;
+
+      &::placeholder {
+        color: transparent;
+      }
+
+      &:placeholder-shown ~ .form__label {
+        font-size: 1.3rem;
+        cursor: text;
+        top: 20px;
+      }
+
+      &:focus {
+        ~ .form__label {
+          position: absolute;
+          top: 0;
+          display: block;
+          transition: 0.2s;
+          font-size: 1rem;
+          color: $frost-2;
+          font-weight: 700;
+        }
+
+        padding-bottom: 6px;
+        font-weight: 700;
+        border-width: 3px;
+        border-image: linear-gradient(to right, $frost-2, $frost-4) 1;
+      }
+    }
+
+    .form__label {
+      position: absolute;
+      top: 0;
+      display: block;
+      transition: 0.2s;
+      font-size: 1rem;
+      color: $grey-4;
+    }
+  }
+
+  .profile {
+    width: 50%;
+    align-self: center;
+
+    form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .edit__profile {
+      margin: 1em;
+      color: $grey-1;
+    }
+  }
+}
+
+.form {
+  form {
+    display: flex;
+    flex-direction: column;
+
+    button {
+      margin-top: 1em;
+      background: $grey-4;
+
+      &:active {
+        background: $grey-3;
+      }
+    }
+  }
+}
+
+/* reset input */
+.form__field{
+  &:required,&:invalid { box-shadow:none; }
+}
+
+.todo-item {
+  margin-bottom: 10px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  input[type="checkbox"] {
+    display: none;
+  }
+
+  span {
+    flex-grow: 1;
+    margin-left: 10px;
+    margin-right: 10px;
+    font-size: 22px;
+  }
+}
+
+.done {
+  .tick {
+    &::before {
+      display: inline;
+    }
+  }
+
+  span {
+    text-decoration: line-through;
+  }
+}
+
+.tick {
+  width: 30px;
+  height: 30px;
+  border: 3px solid $snow-1;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+
+  &::before {
+    content: "✓";
+    font-size: 20px;
+    display: none;
+  }
+}
