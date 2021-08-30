@@ -1,7 +1,19 @@
 import type { SvelteComponent } from "svelte";
 import type { Task } from "./Task";
 
-export type TRouter = {[P: string]: {name: string, component: SvelteComponent}}
+export interface Error {
+    message: string;
+    color: string;
+}
+
+export interface Cate {
+    name: string;
+    id: number;
+}
+
+export type TRouter = { [P: string]: { name: string, component: SvelteComponent, alias?: string } }
+
+export type MyPartial<T> = { [P in keyof T]?: T[P] };
 
 export interface UserData {
     id: number;
@@ -12,19 +24,19 @@ export interface UserData {
 }
 
 interface Default {
-    id: number;
+    readonly id: number;
     name: string;
-    created_at: string;
-    updated_at: string;
-    owner: number;
+    readonly created_at: string;
+    readonly updated_at: string;
+    readonly owner: number;
 }
 
-interface IItem {
-    state: boolean;
-    description: string;
-    category: number;
-    start: string;
-    end: string;
+export interface IItem {
+    state?: boolean;
+    description?: string;
+    category?: number;
+    start?: string;
+    end?: string;
 }
 
 interface ICategory {
@@ -53,7 +65,7 @@ export interface FullDate {
     hours?: number;
     minutes?: number;
     seconds?: number;
-    ms?: number
+    ms?: number;
 }
 
 export type Format = "d" | "m" | "W" | "Y" | "N" | "H" | "i" | "l" | "F";

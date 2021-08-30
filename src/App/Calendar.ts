@@ -102,14 +102,14 @@ export class Calendar {
     }
 
     public getDaysInMonth(month: number, year: number): DateTime[] {
-        if((!month && month !== 0) || (!year && year !== 0)) {
+        if ((!month && month !== 0) || (!year && year !== 0)) {
             return;
         }
 
         const date = new DateTime({ year, month, date: 1 });
         const days: DateTime[] = [];
 
-        while(date.getMonth() === month) {
+        while (date.getMonth() === month) {
             days.push(new DateTime({ timestamp: Number(date) }));
             date.setDate(date.getDate() + 1);
         }
@@ -117,7 +117,7 @@ export class Calendar {
     }
 
     public formatDateToInit(date: Date): void {
-        if(!date) {
+        if (!date) {
             return;
         }
         date.setHours(0, 0, 0);
@@ -163,23 +163,23 @@ export class Calendar {
         this.navigationWrapper.appendChild(div);
 
         this.previousMonthArrow.addEventListener("click", () => {
-                if (this.month === 0) {
-                    this.month = 11;
-                    this.year -= 1;
-                } else {
-                    this.month -= 1;
-                }
-                this.updateCalendar();
+            if (this.month === 0) {
+                this.month = 11;
+                this.year -= 1;
+            } else {
+                this.month -= 1;
+            }
+            this.updateCalendar();
         });
 
         this.nextMonthArrow.addEventListener("click", () => {
-                if (this.month === 11) {
-                    this.month = 0;
-                    this.year += 1;
-                } else {
-                    this.month += 1;
-                }
-                this.updateCalendar();
+            if (this.month === 11) {
+                this.month = 0;
+                this.year += 1;
+            } else {
+                this.month += 1;
+            }
+            this.updateCalendar();
         });
         this.calendarHeader.appendChild(this.navigationWrapper);
     }
@@ -189,7 +189,7 @@ export class Calendar {
         let days = this.getDaysInMonth(this.month, this.year);
         const firstDayOfMonth = days[0].getDay() === 0 ? 7 : days[0].getDay();
 
-        if(firstDayOfMonth > 1) {
+        if (firstDayOfMonth > 1) {
             days = Array(firstDayOfMonth - 1).fill(false, 0).concat(days);
         }
 
@@ -206,7 +206,7 @@ export class Calendar {
             const dateE = date1.toString().split(" ")[2];
 
             const dateIsTheCurrentValue = this.value.toString() === date1.toString();
-            if(dateIsTheCurrentValue) {
+            if (dateIsTheCurrentValue) {
                 this.activeDateElement = dateElement;
             }
 
@@ -219,21 +219,25 @@ export class Calendar {
             const handleSelectedEvent = (event) => {
                 const modal = document.querySelector(".modal");
                 modal.setAttribute("data-visible", "true");
-                if(dateElement.nodeName.toLowerCase() === this.calendarDayElementType && !dateElement.classList.contains("disabled")) {
+                if (dateElement.nodeName.toLowerCase() === this.calendarDayElementType && !dateElement.classList.contains("disabled")) {
                     document.querySelectorAll(".selected").forEach((element) => {
-                            element.classList.remove("selected");
+                        element.classList.remove("selected");
                     });
                     event.target.classList.add("selected");
                     this.value = new Date(dateElement.getAttribute("value"));
                     this.onValueChange(this.callback);
 
-                    if(event.target.classList.contains("selected")) {
+                    if (event.target.classList.contains("selected")) {
                         let elem = event.target;
-                        if(elem.tagName === "P") {
+                        if (elem.tagName === "P") {
                             elem = elem.parentElement;
                         }
                         const [date, month, year] = elem.getAttribute("value").split("/");
-                        this.selectedDay =  new DateTime({ year: Number(year), month: Number(month) - 1, date: Number(date) });
+                        this.selectedDay = new DateTime({
+                            year: Number(year),
+                            month: Number(month) - 1,
+                            date: Number(date)
+                        });
                         this.setTasks().catch();
                     } else {
                         this.selectedDay = null;
@@ -266,7 +270,7 @@ export class Calendar {
         this.calendarElement.appendChild(this.calendarGrid);
         this.activeDateElement.classList.add("selected");
         const [date, month, year] = this.activeDateElement.getAttribute("value").split("/");
-        this.selectedDay =  new DateTime({ year: Number(year), month: Number(month) - 1, date: Number(date) });
+        this.selectedDay = new DateTime({ year: Number(year), month: Number(month) - 1, date: Number(date) });
     }
 
     public updateCalendar(): void {
@@ -284,7 +288,7 @@ export class Calendar {
     }
 
     public onValueChange(callback: (date: Date) => void): void {
-        if(this.callback) {
+        if (this.callback) {
             return this.callback(this.value);
         }
         this.callback = callback;
@@ -303,7 +307,7 @@ export class Calendar {
         const p = d.querySelector("#amount-events");
         const pDone = d.querySelector("#amount-events-done");
 
-        if(events.length > 0) {
+        if (events.length > 0) {
             p.textContent = events.length > 1 ? `${events.length} tâches` : `${events.length} tâche`;
             pDone.textContent = undone.length > 1 ? `${undone.length} non finies` : `${undone.length} non finie`;
         } else {
@@ -313,14 +317,14 @@ export class Calendar {
         const div: HTMLDivElement = document.querySelector("#events") || document.createElement("div");
         div.id = "events";
 
-        if(div.children.length > 0) {
+        if (div.children.length > 0) {
             removeChildren(div);
         }
 
         const date = document.createElement("h1");
         date.classList.add("modal__title");
         date.textContent = this.selectedDay.format("l d F Y", { capitalize: ["l"] });
-        if(this.search) {
+        if (this.search) {
             this.eventsSection.setAttribute("data-visible", "true");
         }
 
@@ -330,8 +334,8 @@ export class Calendar {
         closeModal.addEventListener("click", () => {
             this.eventsSection.setAttribute("data-visible", "false");
             removeChildren(this.eventsSection);
-            if(this.search !== "") {
-                if(this.search === "dmy") {
+            if (this.search !== "") {
+                if (this.search === "dmy") {
                     window.location.href = window.location.href.split("?")[0];
                 }
                 this.search = "";
@@ -339,9 +343,9 @@ export class Calendar {
         });
 
         const observer = new MutationObserver(() => {
-            if(this.eventsSection.getAttribute("data-visible") === "true") {
+            if (this.eventsSection.getAttribute("data-visible") === "true") {
                 document.addEventListener("keydown", (e) => {
-                    if(e.code === "Escape") {
+                    if (e.code === "Escape") {
                         this.eventsSection.setAttribute("data-visible", "false");
                         removeChildren(this.eventsSection);
                     }
@@ -352,9 +356,9 @@ export class Calendar {
         observer.observe(this.eventsSection, { attributes: true });
 
         div.appendChild(date);
-        div.insertAdjacentHTML("beforeend", "<h4><a class='add-event-from-day' href='/todolist'>Ajouter</a> un nouvel événement ce jour</h4>")
+        div.insertAdjacentHTML("beforeend", "<h4><a class='add-event-from-day' href='/todolist'>Ajouter</a> un nouvel événement ce jour</h4>");
 
-        div.querySelector("a[href='/todolist']").addEventListener("click", (e) => {
+        div.querySelector("a[href='/todolist']").addEventListener("click", () => {
             localStorage.setItem("date", this.selectedDay.toString());
         });
         div.appendChild(closeModal);
@@ -362,7 +366,7 @@ export class Calendar {
         const eventsContainer = document.createElement("div");
         eventsContainer.classList.add("events__container");
 
-        if(events.length === 0) {
+        if (events.length === 0) {
             const div = document.createElement("div");
             div.classList.add("no__events");
             const h3 = document.createElement("h3");
@@ -380,7 +384,7 @@ export class Calendar {
 
             const li = document.createElement("li");
             li.classList.add(`todo-item`);
-            if(state) {
+            if (state) {
                 li.classList.add("done");
             }
 
@@ -411,7 +415,7 @@ export class Calendar {
             pCategory.textContent = `Catégorie: ${cat.name}`;
             event.appendChild(pCategory);
 
-            if(description !== null) {
+            if (description !== null) {
                 const pDescription = document.createElement("p");
                 pDescription.textContent = `Description: ${description}`;
                 event.appendChild(pDescription);

@@ -6,7 +6,15 @@
     "moduleResolution": "Node",
     "resolveJsonModule": true,
     "baseUrl": ".",
-    "lib": ["dom"]
+    "lib": [
+      "dom",
+      "ES6"
+    ]
   },
-  "include": ["src/**/*.d.ts", "src/**/*.ts", "src/**/*.js", "src/**/*.svelte"]
+  "include": [
+    "src/**/*.d.ts",
+    "src/**/*.ts",
+    "src/**/*.js",
+    "src/**/*.svelte"
+  ]
 }

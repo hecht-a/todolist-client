@@ -1,14 +1,13 @@
 import axios from "axios";
-import { compareDate } from "./compareDate";
 import { DateTime } from "./DateTime";
-import type { Category, Item } from "./types";
+import type { Category, IItem, Item, MyPartial } from "./types";
 
 export class Task {
 
-    private token: string;
-    private apiURL: string;
+    private readonly token: string;
+    private readonly apiURL: string;
 
-    constructor({ token, apiURL }: {token: string, apiURL: string}) {
+    constructor({ token, apiURL }: { token: string, apiURL: string }) {
         this.token = token;
         this.apiURL = apiURL;
     }
@@ -36,7 +35,7 @@ export class Task {
      * @APIRoute APIURL/item/
      */
     public async getTasks(): Promise<Item[]> {
-        const { data }: {data: Item[]} = await axios.get(`http://localhost:3333/item/`, {
+        const { data }: { data: Item[] } = await axios.get(`${this.apiURL}/item/`, {
             headers: {
                 "Authorization": `Bearer ${this.token}`
             }
@@ -53,13 +52,16 @@ export class Task {
      */
     public async getTasksByCategory(categoryId: number): Promise<Item[]> {
 
-        const { data }: {data: Item[]} = await axios.get(`http://localhost:3333/item/${String(categoryId)}`, {
+        const { data }: { data: Item[] } = await axios.get(`${this.apiURL}/item/${String(categoryId)}`, {
             headers: {
                 "Authorization": `Bearer ${this.token}`
             }
         });
-        const done = data.filter(({ start, state }) => new DateTime({ timestamp: Number(new Date(start)) }).format("Y-m-d") !== new DateTime({ timestamp: Date.now() }).format("Y-m-d") && !state);
-        if(done.length > 0) {
+        const done = data.filter(({
+                                      start,
+                                      state
+                                  }) => new DateTime({ timestamp: Number(new Date(start)) }).format("Y-m-d") < new DateTime({ timestamp: Date.now() }).format("Y-m-d") && !state);
+        if (done.length > 0) {
             done.forEach(({ id }) => this.toggleDone(id));
         }
         return data;
@@ -73,7 +75,7 @@ export class Task {
      * @APIRoute APIURL/item/:id
      */
     public async deleteTask(id: number): Promise<void> {
-        await axios.delete(`http://localhost:3333/item/${String(id)}`, {
+        await axios.delete(`${this.apiURL}/item/${String(id)}`, {
             headers: {
                 "Authorization": `Bearer ${this.token}`
             }
@@ -88,7 +90,7 @@ export class Task {
      * @APIRoute APIURL/item
      */
     public async createTask(fd: FormData): Promise<Item[]> {
-        await axios.post("http://localhost:3333/item", fd, {
+        await axios.post(`${this.apiURL}/item`, fd, {
             headers: {
                 "Authorization": `Bearer ${this.token}`
             }
@@ -99,12 +101,21 @@ export class Task {
     /**
      * Change state of the task (done or not)
      * @param id
+     * @param data
      * @return Promise<void>
      * @method PUT
      * @APIRoute APIURL/item/:id
      */
     public async toggleDone(id: number): Promise<void> {
-        await axios.put(`http://localhost:3333/item/${String(id)}`, {}, {
+        await axios.put(`${this.apiURL}/item/${String(id)}`, {}, {
+            headers: {
+                "Authorization": `Bearer ${this.token}`
+            }
+        });
+    }
+
+    public async editTask(id: number, data: MyPartial<IItem & { name: string }>): Promise<void> {
+        await axios.put(`${this.apiURL}/item/${String(id)}`, {}, {
             headers: {
                 "Authorization": `Bearer ${this.token}`
             }
@@ -118,7 +129,7 @@ export class Task {
      * @APIRoute APIURL/category/all
      */
     public async getCategories(): Promise<Category[]> {
-        const { data } = await axios.get<Category[]>(`http://localhost:3333/category/all`, {
+        const { data } = await axios.get<Category[]>(`${this.apiURL}/category/all`, {
             headers: {
                 "Authorization": `Bearer ${this.token}`
             }
@@ -134,7 +145,7 @@ export class Task {
      * @APIRoute APIURL/category/:id
      */
     public async getCategory(id: number): Promise<Category> {
-        const { data } = await axios.get<Category>(`http://localhost:3333/category/${String(id)}`, {
+        const { data } = await axios.get<Category>(`${this.apiURL}/category/${String(id)}`, {
             headers: {
                 "Authorization": `Bearer ${this.token}`
             }
@@ -150,13 +161,13 @@ export class Task {
      * @APIRoute APIURL/category
      */
     public async createCategory(fd: FormData): Promise<Category[] | { error: string }> {
-        const { data }: {data: {error: string}} = await axios.post("http://localhost:3333/category/", fd, {
+        const { data }: { data: { error: string } } = await axios.post(`${this.apiURL}/category/`, fd, {
             headers: {
                 "Authorization": `Bearer ${this.token}`
             }
         });
 
-        if(data.error) {
+        if (data.error) {
             return data;
         }
         return this.getCategories();
@@ -170,7 +181,7 @@ export class Task {
      * @APIRoute APIURL/category/:id
      */
     public async deleteCategory(id: number): Promise<void> {
-        await axios.delete(`http://localhost:3333/category/${String(id)}`, {
+        await axios.delete(`${this.apiURL}/category/${String(id)}`, {
             headers: {
                 "Authorization": `Bearer ${this.token}`
             }

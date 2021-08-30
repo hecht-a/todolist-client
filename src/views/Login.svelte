@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { API_URL } from "../config";
+
     function login() {
         const form = document.querySelector(".form");
         const email = form.querySelector<HTMLInputElement>("#email");
@@ -7,7 +9,7 @@
         formData.append("email", email.value);
         formData.append("password", password.value);
         const xhr = new XMLHttpRequest();
-        xhr.open("POST", "http://localhost:3333/login");
+        xhr.open("POST", `${API_URL}/login`);
         xhr.send(formData);
         xhr.onload = () => {
             localStorage.setItem("UserData", xhr.response);
@@ -26,7 +28,8 @@
             <label for="email" class="form__label">Email</label>
         </div>
         <div class="form__group">
-            <input id="password" class="form__field" type="password" aria-label="Enter your password" placeholder="Password">
+            <input id="password" class="form__field" type="password" aria-label="Enter your password"
+                   placeholder="Password">
             <label for="password" class="form__label">Mot de passe</label>
         </div>
         <a href="/register" class="link">S'inscrire</a>
