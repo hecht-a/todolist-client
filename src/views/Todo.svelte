@@ -3,7 +3,7 @@
     import { onDestroy, onMount } from "svelte";
     import { insertLoader } from "@App/insertLoader";
     import type { Cate, Item } from "@App/types";
-    import { API_URL } from "@/config";
+    import { API_URL } from "@App/config";
     import DefaultMessage from "@Components/DefaultMessage.svelte";
     import Categories from "@Components/Categories.svelte";
     import TodoList from "@Components/TodoList.svelte";

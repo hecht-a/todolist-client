@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { API_URL } from "@/config";
+    import { API_URL } from "@App/config";
 
     function login() {
         const form = document.querySelector(".form");

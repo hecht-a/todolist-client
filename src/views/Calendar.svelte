@@ -3,7 +3,7 @@
     import { Calendar } from "@App/Calendar";
     import { Task } from "@App/Task";
     import { insertLoader } from "@App/insertLoader";
-    import { API_URL } from "@/config";
+    import { API_URL } from "@App/config";
 
     if (!localStorage.getItem("UserData")) {
         window.location.href = "/login";

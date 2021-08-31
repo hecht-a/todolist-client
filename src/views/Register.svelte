@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { API_URL } from "@/config";
+    import { API_URL } from "@App/config";
 
     let error = "";
 
