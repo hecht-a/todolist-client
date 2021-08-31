@@ -1,6 +1,6 @@
 import axios from "axios";
-import { DateTime } from "./DateTime";
-import type { Category, IItem, Item, MyPartial } from "./types";
+import { DateTime } from "@App/DateTime";
+import type { Category, IItem, Item, MyPartial } from "@App/types";
 
 export class Task {
 

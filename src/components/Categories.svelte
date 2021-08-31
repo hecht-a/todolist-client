@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { Task } from "../App/Task";
-    import type { Cate, Category, Error, Item, UserData } from "../App/types";
-    import { insertLoader } from "../App/insertLoader";
+    import { Task } from "@App/Task";
+    import type { Cate, Category, Error, Item, UserData } from "@App/types";
+    import { insertLoader } from "@App/insertLoader";
     import { onMount } from "svelte";
 
     export let initError: ({ message, color }: Error) => void;

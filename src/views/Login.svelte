@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { API_URL } from "../config";
+    import { API_URL } from "@/config";
 
     function login() {
         const form = document.querySelector(".form");
@@ -9,7 +9,7 @@
         formData.append("email", email.value);
         formData.append("password", password.value);
         const xhr = new XMLHttpRequest();
-        xhr.open("POST", `${API_URL}/login`);
+        xhr.open("POST", `${<string>API_URL}/login`);
         xhr.send(formData);
         xhr.onload = () => {
             localStorage.setItem("UserData", xhr.response);

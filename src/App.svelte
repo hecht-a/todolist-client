@@ -1,13 +1,13 @@
 <script lang="ts">
     import { Link, Route, Router } from "svelte-routing";
 
-    import Todo from "./views/Todo.svelte";
-    import Login from "./views/Login.svelte";
-    import Logout from "./views/Logout.svelte";
-    import Register from "./views/Register.svelte";
-    import Calendar from "./views/Calendar.svelte";
-    import Profile from "./views/Profile.svelte";
-    import type { TRouter, UserData } from "./App/types";
+    import Todo from "@Views/Todo.svelte";
+    import Login from "@Views/Login.svelte";
+    import Logout from "@Views/Logout.svelte";
+    import Register from "@Views/Register.svelte";
+    import Calendar from "@Views/Calendar.svelte";
+    import Profile from "@Views/Profile.svelte";
+    import type { TRouter, UserData } from "@App/types";
 
     const userData: UserData = JSON.parse(localStorage.getItem("UserData"));
 

@@ -8,13 +8,28 @@
     "baseUrl": ".",
     "lib": [
       "dom",
-      "ES6"
-    ]
+      "ESNext"
+    ],
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@App/*": [
+        "./src/App/*"
+      ],
+      "@Components/*": [
+        "./src/components/*"
+      ],
+      "@Views/*": [
+        "./src/views/*"
+      ]
+    }
   },
   "include": [
     "src/**/*.d.ts",
     "src/**/*.ts",
     "src/**/*.js",
-    "src/**/*.svelte"
+    "src/**/*.svelte",
+    "server.js"
   ]
 }

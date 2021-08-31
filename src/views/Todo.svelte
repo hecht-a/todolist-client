@@ -1,13 +1,13 @@
 <script lang="ts">
-    import { Task } from "../App/Task";
+    import { Task } from "@App/Task";
     import { onDestroy, onMount } from "svelte";
-    import { insertLoader } from "../App/insertLoader";
-    import type { Cate, Item } from "../App/types";
-    import { API_URL } from "../config";
-    import Modal from "../components/Modal.svelte";
-    import DefaultMessage from "../components/DefaultMessage.svelte";
-    import Categories from "../components/Categories.svelte";
-    import TodoList from "../components/TodoList.svelte";
+    import { insertLoader } from "@App/insertLoader";
+    import type { Cate, Item } from "@App/types";
+    import { API_URL } from "@/config";
+    import DefaultMessage from "@Components/DefaultMessage.svelte";
+    import Categories from "@Components/Categories.svelte";
+    import TodoList from "@Components/TodoList.svelte";
+    import CreateTaskModal from "@Components/modals/CreateTaskModal.svelte";
 
     if (!localStorage.getItem("UserData")) {
         window.location.href = "/login";
@@ -171,11 +171,11 @@
 
     <button class="show__modal" on:click={openModal}>Ajouter une tâche</button>
 
-    <Modal error={error}
-           selectedCategory={selectedCategory}
-           task={task}
-           initError={initError}
-           deleteTodo={deleteTodo}
-           setItems={setItems}
+    <CreateTaskModal error={error}
+                     selectedCategory={selectedCategory}
+                     task={task}
+                     initError={initError}
+                     deleteTodo={deleteTodo}
+                     setItems={setItems}
     />
 </div>

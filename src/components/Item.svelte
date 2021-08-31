@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { DateTime } from "../App/DateTime";
+    import { DateTime } from "@App/DateTime";
 
     export let todo;
     export let toggleDone;

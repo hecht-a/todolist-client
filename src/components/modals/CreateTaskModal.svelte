@@ -1,8 +1,8 @@
 <script lang="ts">
-    import { DateTime } from "../App/DateTime";
-    import { Task } from "../App/Task";
-    import type { UserData } from "../App/types";
-    import { insertLoader } from "../App/insertLoader";
+    import { DateTime } from "@App/DateTime";
+    import { Task } from "@App/Task";
+    import type { UserData } from "@App/types";
+    import { insertLoader } from "@App/insertLoader";
 
     export let error;
     export let selectedCategory;

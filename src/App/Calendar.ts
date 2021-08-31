@@ -1,8 +1,8 @@
-import type { Task } from "./Task";
-import { DateTime } from "./DateTime";
-import { insertLoader } from "./insertLoader";
-import { removeChildren } from "./removeChildren";
-import type { Item, Options } from "./types";
+import type { Task } from "@App/Task";
+import { DateTime } from "@App/DateTime";
+import { insertLoader } from "@App/insertLoader";
+import { removeChildren } from "@App/removeChildren";
+import type { Item, Options } from "@App/types";
 
 export class Calendar {
     public static readonly days = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
@@ -23,17 +23,17 @@ export class Calendar {
 
     private userElement: HTMLElement;
 
-    private calendarWrapper: HTMLDivElement;
-    private calendarElement: HTMLDivElement;
-    private calendarHeader: HTMLElement;
-    private calendarHeaderTitle: HTMLHeadingElement;
-    private navigationWrapper: HTMLDivElement;
-    private previousMonthArrow: HTMLAnchorElement;
-    private nextMonthArrow: HTMLAnchorElement;
-    private calendarGridDays: HTMLElement;
-    private calendarGrid: HTMLElement;
-    private eventsSection: HTMLElement;
-    private calendarDayElementType: string;
+    private readonly calendarWrapper: HTMLDivElement;
+    private readonly calendarElement: HTMLDivElement;
+    private readonly calendarHeader: HTMLElement;
+    private readonly calendarHeaderTitle: HTMLHeadingElement;
+    private readonly navigationWrapper: HTMLDivElement;
+    private readonly previousMonthArrow: HTMLAnchorElement;
+    private readonly nextMonthArrow: HTMLAnchorElement;
+    private readonly calendarGridDays: HTMLElement;
+    private readonly calendarGrid: HTMLElement;
+    private readonly eventsSection: HTMLElement;
+    private readonly calendarDayElementType: string;
 
     private dayAsText: string;
     private monthAsText: string;

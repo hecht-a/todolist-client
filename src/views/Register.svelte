@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { API_URL } from "../config";
+    import { API_URL } from "@/config";
 
     let error = "";
 
@@ -16,7 +16,7 @@
         formData.append("email", email.value);
         formData.append("password", password.value);
         const xhr = new XMLHttpRequest();
-        xhr.open("POST", `${API_URL}/register`);
+        xhr.open("POST", `${<string>API_URL}/register`);
         xhr.send(formData);
         xhr.onload = () => {
             const response = JSON.parse(xhr.response);

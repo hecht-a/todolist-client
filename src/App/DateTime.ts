@@ -1,4 +1,4 @@
-import type { DateTimestamp, Format, FullDate } from "./types";
+import type { DateTimestamp, Format, FullDate } from "@App/types";
 
 export class DateTime extends Date {
 
@@ -17,7 +17,7 @@ export class DateTime extends Date {
     }
 
     public removeMonth(amount: number): DateTime {
-        if("timestamp" in this.value) {
+        if ("timestamp" in this.value) {
             const date = new DateTime(this.value);
             return new DateTime({ timestamp: date.setMonth(date.getMonth() - amount) });
         } else {
@@ -26,7 +26,7 @@ export class DateTime extends Date {
     }
 
     public addMonth(amount: number): DateTime {
-        if("timestamp" in this.value) {
+        if ("timestamp" in this.value) {
             const date = new DateTime(this.value);
             return new DateTime({ timestamp: date.setMonth(date.getMonth() + amount) });
         } else {
@@ -35,7 +35,7 @@ export class DateTime extends Date {
     }
 
     public removeDay(amount: number): DateTime {
-        if("timestamp" in this.value) {
+        if ("timestamp" in this.value) {
             const date = new DateTime(this.value);
             return new DateTime({ timestamp: date.setDate(date.getDate() - amount) });
         } else {
@@ -44,24 +44,27 @@ export class DateTime extends Date {
     }
 
     public addDay(amount: number): DateTime {
-        if("timestamp" in this.value) {
+        if ("timestamp" in this.value) {
             const date = new DateTime(this.value);
             return new DateTime({ timestamp: date.setDate(date.getDate() + amount) });
         } else {
-            return new DateTime({ ...this.value, date: (this.value.date ?? new DateTime({ timestamp: DateTime.now() }).getDate()) + amount });
+            return new DateTime({
+                ...this.value,
+                date: (this.value.date ?? new DateTime({ timestamp: DateTime.now() }).getDate()) + amount
+            });
         }
     }
 
     public getWeek(): number {
         const oneJan = new Date(this.getFullYear(), 0, 4);
         const a = Math.ceil((((new DateTime(this.value).getTime() - oneJan.getTime()) / 86400000) + oneJan.getDay() + 1) / 7);
-        return  a === 0 ? a + 1 : a;
+        return a === 0 ? a + 1 : a;
     }
 
-    public format(format: string, capitalize?: {capitalize?: Format[]}): string {
+    public format(format: string, capitalize?: { capitalize?: Format[] }): string {
         let dateStr = "";
         const date = new DateTime(this.value);
-        for(let i = 0; i < format.length; i++) {
+        for (let i = 0; i < format.length; i++) {
             switch (format[i]) {
                 // jour du mois avec 0 initiaux (01 à 31)
                 case "d":
@@ -111,11 +114,11 @@ export class DateTime extends Date {
 
     public getLastMonday(month: number, year: number, day = 3): DateTime {
         const date = new DateTime({ month: month - 1, year, date: day });
-        if(date.getDay() === 1 || day > 1) {
+        if (date.getDay() === 1 || day > 1) {
             return date;
         } else {
-            while(date.getDay() !== 1) {
-                if(day < 1) {
+            while (date.getDay() !== 1) {
+                if (day < 1) {
                     month -= 1;
                     day = (new DateTime({ timestamp: date.setDate(date.getDate() - 1) })).getDate();
                 }

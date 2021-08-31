@@ -1,6 +1,6 @@
 <script lang="ts">
-    import Item from "./Item.svelte";
-    import { insertLoader } from "../App/insertLoader";
+    import Item from "@Components/Item.svelte";
+    import { insertLoader } from "@App/insertLoader";
 
     export let cond;
     export let classes;

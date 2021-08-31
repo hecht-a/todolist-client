@@ -1,5 +1,5 @@
 import type { SvelteComponent } from "svelte";
-import type { Task } from "./Task";
+import type { Task } from "@App/Task";
 
 export interface Error {
     message: string;
