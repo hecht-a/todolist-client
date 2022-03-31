@@ -1,71 +1,68 @@
-import type { SvelteComponent } from "svelte";
 import type { Task } from "@App/Task";
+import type { SvelteComponent } from "svelte";
 
 export interface Error {
-    message: string;
-    color: string;
+	message: string;
+	color: string;
 }
 
-export interface Cate {
-    name: string;
-    id: number;
+interface Base {
+	id: number;
+	name: string;
+	created_at?: string;
+	updated_at?: string;
 }
 
-export type TRouter = { [P: string]: { name: string, component: SvelteComponent, alias?: string } }
+export type Item = {
+	state: 0 | 1;
+	description: string;
+	category: number;
+	start: string;
+	end: string;
+} & Base;
+
+export type Category = {
+	items: Item[];
+	owner: number;
+	created_at: string;
+	updated_at: string;
+} & Base;
+
+export type User = {
+	email: string;
+	remember_me_token?: string;
+} & Base;
+
+export type TRouter = { [P: string]: { name: string; component: SvelteComponent; alias?: string } };
 
 export type MyPartial<T> = { [P in keyof T]?: T[P] };
 
-export interface UserData {
-    id: number;
-    email: string;
-    token: string;
-    created_at: string;
-    updated_at: string;
+export interface Token {
+	type: string;
+	token: string;
+	expires_at: string;
 }
-
-interface Default {
-    readonly id: number;
-    name: string;
-    readonly created_at: string;
-    readonly updated_at: string;
-    readonly owner: number;
-}
-
-export interface IItem {
-    state?: boolean;
-    description?: string;
-    category?: number;
-    start?: string;
-    end?: string;
-}
-
-interface ICategory {
-    uuid: string;
-}
-
-export type Category = Default & ICategory
-export type Item = Default & IItem
 
 export interface Options {
-    min: Date;
-    max: Date;
-    task: Task;
-    current?: Date;
-    search?: string;
+	min: Date;
+	max: Date;
+	task: Task;
+	current?: Date;
+	search?: string;
 }
 
 export interface DateTimestamp {
-    timestamp: number;
+	timestamp: number;
 }
 
 export interface FullDate {
-    year: number;
-    month: number;
-    date?: number;
-    hours?: number;
-    minutes?: number;
-    seconds?: number;
-    ms?: number;
+	year: number;
+	month: number;
+	date?: number;
+	hours?: number;
+	minutes?: number;
+	seconds?: number;
+	ms?: number;
 }
 
 export type Format = "d" | "m" | "W" | "Y" | "N" | "H" | "i" | "l" | "F";

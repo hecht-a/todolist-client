@@ -1,11 +1,11 @@
 <script lang="ts">
-    import { onDestroy, onMount } from "svelte";
     import { Calendar } from "@App/Calendar";
-    import { Task } from "@App/Task";
-    import { insertLoader } from "@App/insertLoader";
     import { API_URL } from "@App/config";
+    import { insertLoader } from "@App/insertLoader";
+    import { Task } from "@App/Task";
+    import { onDestroy, onMount } from "svelte";
 
-    if (!localStorage.getItem("UserData")) {
+    if (!localStorage.getItem("token")) {
         window.location.href = "/login";
     }
 
@@ -22,7 +22,7 @@
         }
 
         const task = new Task({
-            token: JSON.parse(localStorage.getItem("UserData"))["token"],
+            token: JSON.parse(localStorage.getItem("token"))["token"],
             apiURL: API_URL
         });
 
@@ -52,7 +52,7 @@
             search
         });
 
-        insertLoader("#calendar", async() => {
+        insertLoader("#calendar", async () => {
             await calendar.setTasks();
         }).catch();
     });
