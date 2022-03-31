@@ -1,14 +1,16 @@
 <script lang="ts">
+    import { MAX_TITLE_LENGTH } from "@App/config";
     import { DateTime } from "@App/DateTime";
-    import { Task } from "@App/Task";
-    import type { UserData } from "@App/types";
     import { insertLoader } from "@App/insertLoader";
+    import { errorStore, itemsStore, selectedCategoryStore, taskStore } from "@/stores";
+    import { get } from "svelte/store";
 
-    export let error;
-    export let selectedCategory;
-    export let task;
-    export let initError;
-    export let setItems;
+    const error = get(errorStore);
+    const task = get(taskStore);
+    let selectedCategory;
+    selectedCategoryStore.subscribe((value) => {
+        selectedCategory = value;
+    });
 
     const date = Number(new Date(localStorage.getItem("date"))) || Date.now();
     let newTodo: string;
@@ -16,45 +18,37 @@
     let start: string = new DateTime({ timestamp: date }).format("Y-m-dTH:i");
     let end: string = new DateTime({ timestamp: date }).format("Y-m-dTH:i");
 
-    function closeModal() {
+    function closeModal (): void {
         document.querySelector(".modal").setAttribute("data-visible", "false");
-        initError({ message: "", color: "" });
+        errorStore.set({ message: "", color: "" });
     }
 
-    async function addTodoToCategory() {
-        initError({ message: "", color: "" });
+    async function addTodoToCategory (): Promise<void> {
+        errorStore.set({ message: "", color: "" });
 
         if (newTodo === "" || newTodo === undefined) {
-            initError({ message: "La tâche ne peut être vide.", color: "#BF616A" });
+            errorStore.set({ message: "La tâche ne peut être vide.", color: "#BF616A" });
             return;
         }
 
-        if (newTodo.trim().length > 30) {
-            initError({ message: "La tâche ne peut excéder 30 caractères.", color: "#BF616A" });
+        if (newTodo.trim().length > MAX_TITLE_LENGTH) {
+            errorStore.set({ message: `La tâche ne peut excéder ${MAX_TITLE_LENGTH} caractères.`, color: "#BF616A" });
             return;
         }
 
         const startD = new DateTime({ timestamp: Number(start === "" ? new Date() : new Date(start)) });
         const endD = new DateTime({ timestamp: Number(end === "" ? new Date() : new Date(end)) });
 
-        const fd = new FormData();
-        fd.append("name", newTodo.trim());
-        fd.append("state", String(0));
-        fd.append("category", String(selectedCategory.id));
-        fd.append("owner", String((await Task.getLocalStorage<UserData>("UserData")).id));
-        fd.append("start", startD.format("Y-m-d H:i"));
-        fd.append("end", endD.format("Y-m-d H:i"));
-        fd.append("description", description.trim());
 
-        void await insertLoader(".container", async() => {
-            setItems(await task.createTask(fd));
+        void await insertLoader(".container", async () => {
+            itemsStore.set(await task.createTask({ name: newTodo.trim(), state: false, category: selectedCategory.id, start: startD.format("Y-m-d H:i"), end: endD.format("Y-m-d H:i"), description: description.trim() }));
         });
 
         newTodo = "";
         description = "";
         start = "";
         end = "";
-        initError({ message: "La tâche a bien été ajoutée", color: "#A3BE8C" });
+        errorStore.set({ message: "La tâche a bien été ajoutée", color: "#A3BE8C" });
 
         if (localStorage.getItem("date")) {
             localStorage.removeItem("date");
@@ -63,24 +57,24 @@
         end = new DateTime({ timestamp: Date.now() }).format("Y-m-dTH:i");
     }
 
-    function setDate(e) {
+    function setDate (e): void {
         e.preventDefault();
         if (new Date(start).setHours(0, 0, 0, 0) > new Date(end).setHours(0, 0, 0, 0)) {
-            initError({ message: "La date de début doit être inférieure à la date de fin.", color: "#BF616A" });
+            errorStore.set({ message: "La date de début doit être inférieure à la date de fin.", color: "#BF616A" });
             return;
         }
 
         if (new Date().setHours(0, 0, 0, 0) > new Date(e.target.valueAsNumber).setHours(0, 0, 0, 0) ||
             new Date().setHours(0, 0, 0, 0) > new Date(start).setHours(0, 0, 0, 0) ||
             new Date().setHours(0, 0, 0, 0) > new Date(end).setHours(0, 0, 0, 0)) {
-            initError({
+            errorStore.set({
                 message: "La date de début et/ou de fin ne peut pas être antérieure à la date d'aujourd'hui.",
                 color: "#BF616A"
             });
             return;
         }
 
-        initError({ message: "", color: "" });
+        errorStore.set({ message: "", color: "" });
         return;
     }
 </script>
@@ -88,7 +82,7 @@
 <div class="modal" data-visible="false">
     <div class="form__task__container">
         <button class="close__modal" on:click={closeModal} aria-label="Fermer la fenêtre">✗</button>
-        <h1 class="modal__title">Ajout de tâche(s) dans la catégorie "{selectedCategory.name}"</h1>
+        <h1 class="modal__title">Ajout de tâche(s) dans la catégorie "{selectedCategory && selectedCategory.name}"</h1>
         {#if error.message !== ""}
             <div class="error" style="color: {error.color}">{error.message}</div>
         {/if}
@@ -104,12 +98,12 @@
                 <label for="description" class="todo-label form__label">Description</label>
             </div>
             <div class="form__group">
-                <input id="start" on:change={setDate} class="form__field field" type="datetime-local"
+                <input id="start" on:change={(e) => setDate(e)} class="form__field field" type="datetime-local"
                        aria-label="Enter a new todo item" placeholder="HH:MM" bind:value={start}>
                 <label for="start" class="todo-label form__label">Start</label>
             </div>
             <div class="form__group">
-                <input id="end" on:change={setDate} class="form__field field" type="datetime-local"
+                <input id="end" on:change={(e) => setDate(e)} class="form__field field" type="datetime-local"
                        aria-label="Enter a new todo item" placeholder="HH:MM" bind:value={end}>
                 <label for="end" class="todo-label form__label">End</label>
             </div>

@@ -1,112 +1,105 @@
 <script lang="ts">
-    import { Task } from "@App/Task";
-    import type { Cate, Category, Error, Item, UserData } from "@App/types";
-    import { insertLoader } from "@App/insertLoader";
-    import { onMount } from "svelte";
+	import { insertLoader } from "@App/insertLoader";
+	import type { Category } from "@App/types";
+	import { onMount } from "svelte";
+	import { get } from "svelte/store";
+	import { categoriesStore, errorStore, itemsStore, selectedCategoryStore, taskStore } from "@/stores";
 
-    export let initError: ({ message, color }: Error) => void;
-    export let task: Task;
-    export let setItems: (items: Item[]) => void;
-    export let error: Error;
-    export let setSelectedCategory: (category: Cate) => void;
-    export let getSelectedCategory: () => Cate;
-    export let setCategories: (cats: Cate[]) => void;
-    export let getCategories: () => Cate[];
-    let newCategory: string;
+	let error;
+	let selectedCategory;
 
-    let categories = [];
-    let selectedCategory = getSelectedCategory();
+	errorStore.subscribe(() => {
+		error = get(errorStore);
+	});
 
-    onMount(() => {
-        void insertLoader(".container", async() => {
-            const category = await task.getCategories();
-            categories = category.map(({ name, id }) => ({ name, id }));
-            if (getSelectedCategory().name === "default" && getSelectedCategory().id === -1) {
-                setSelectedCategory(categories[0]);
-            }
-            setItems(await task.getTasksByCategory(getSelectedCategory().id));
-        }).then(() => {
-            selectedCategory = getSelectedCategory();
-        });
-    });
+	selectedCategoryStore.subscribe((value) => {
+		selectedCategory = value;
+	});
 
-    async function createCategory() {
-        initError({ message: "", color: "" });
-        if (newCategory === "" || newCategory === undefined) {
-            initError({ message: "Le nom de la catégorie ne peut être vide.", color: "#BF616A" });
-            return;
-        }
+	const task = get(taskStore);
 
-        newCategory = newCategory.trim();
-        const fd = new FormData();
-        fd.append("name", newCategory.trim());
-        fd.append("owner", String((await Task.getLocalStorage<UserData>("UserData")).id));
+	let newCategory: string;
+	let categories: Category[] = [];
 
-        void await insertLoader(".container", async() => {
-            const cats: { error: string } | Category[] = await task.createCategory(fd);
 
-            if ("error" in cats) {
-                initError({ message: "La catégorie existe déjà.", color: "#BF616A" });
-                return;
-            }
-            newCategory = "";
-            setCategories(cats.map(({ id, name }) => ({ id, name })));
-            categories = getCategories();
-            setSelectedCategory(categories[categories.length - 1]);
-            selectedCategory = getSelectedCategory();
-            setItems(await task.getTasksByCategory(getSelectedCategory().id));
-        });
-    }
+	onMount(() => {
+		void insertLoader(".container", async () => {
+			categories = await task.getCategories();
+			itemsStore.set(await task.getTasksByCategory(selectedCategory.id));
+		});
+	});
 
-    function changeCategory(e) {
-        error = { message: "", color: "transparent" };
-        setSelectedCategory({ name: e.target.value, id: e.target.getAttribute("data-id") });
-        selectedCategory = getSelectedCategory();
-        void insertLoader(".container", async() => {
-            setItems(await task.getTasksByCategory(getSelectedCategory().id));
-        });
-        console.log(selectedCategory);
-    }
+	async function createCategory (): Promise<void> {
+		errorStore.set({ message: "", color: "" });
+		if (newCategory === "" || newCategory === undefined) {
+			errorStore.set({ message: "Le nom de la catégorie ne peut être vide.", color: "#BF616A" });
+			return;
+		}
 
-    function deleteCategory() {
-        error = { message: "", color: "transparent" };
-        void insertLoader(".container", async() => {
-            const { id } = getSelectedCategory();
-            await task.deleteCategory(id);
-            setCategories((await task.getCategories()).map(({ name, id }) => ({ name, id })));
-            categories = getCategories();
-            setSelectedCategory(categories[categories.length - 1]);
-            selectedCategory = getSelectedCategory();
-            setItems(await task.getTasksByCategory(selectedCategory.id));
-        });
-    }
+		newCategory = newCategory.trim();
+
+		void await insertLoader(".container", async () => {
+			const cats: { error: string } | Category[] = await task.createCategory({ name: newCategory });
+
+			if ("error" in cats) {
+				errorStore.set({ message: "La catégorie existe déjà.", color: "#BF616A" });
+				return;
+			}
+			newCategory = "";
+			categoriesStore.set(cats);
+			categories = get(categoriesStore);
+			selectedCategoryStore.set(categories[categories.length - 1]);
+			itemsStore.set(await task.getTasksByCategory(selectedCategory.id));
+		});
+	}
+
+	async function changeCategory (e): Promise<void> {
+		errorStore.set({ message: "", color: "transparent" });
+		const category = await task.getCategory(parseInt(e.target.dataset.id, 10));
+		selectedCategoryStore.set(category);
+		await insertLoader(".container", async () => {
+			itemsStore.set(await task.getTasksByCategory(selectedCategory.id));
+		});
+	}
+
+	function deleteCategory (): void {
+		errorStore.set({ message: "", color: "transparent" });
+		void insertLoader(".container", async () => {
+			const { id } = selectedCategory;
+			await task.deleteCategory(id);
+			categoriesStore.set((await task.getCategories()));
+			categories = get(categoriesStore);
+			selectedCategoryStore.set(categories[categories.length - 1]);
+			itemsStore.set(await task.getTasksByCategory(selectedCategory.id));
+		});
+	}
 </script>
 
 <div class="categories">
-    <div class="button_cat_container">
-        {#each categories as category}
-            {#if category.name === selectedCategory.name}
-                <p class="button selected">{category.name}</p>
-            {:else}
-                <button class="category" value={category.name} data-id="{category.id}"
-                        on:click={changeCategory}>{category.name}</button>
-            {/if}
-        {/each}
-    </div>
-    {#if categories.length > 1}
-        <button class="delete-category" on:click={deleteCategory}>Supprimer la catégorie sélectionnée 🗑️
-        </button>
-    {/if}
+	<div class="button_cat_container">
+		{#each categories as category}
+			{#if category.name === selectedCategory.name}
+				<p class="button selected">{category.name}</p>
+			{:else}
+				<button class="category" value={category.name} data-id="{category.id}"
+						on:click={(e) => changeCategory(e)}>{category.name}</button>
+			{/if}
+		{/each}
+	</div>
+	{#if categories.length > 1}
+		<button class="delete-category" on:click={() => deleteCategory()}>Supprimer la catégorie sélectionnée 🗑️
+		</button>
+	{/if}
 </div>
 
 {#if error.message !== ""}
-    <div class="error" style="color: {error.color}">{error.message}</div>
+	<div class="error" style="color: {error.color}">{error.message}</div>
 {/if}
 
 <form on:submit|preventDefault={createCategory}>
-    <div class="form__group">
-        <input id="category" class="form__field field category-input" type="text" aria-label="Enter a new category"
-               placeholder="E.g. Supermarket" bind:value={newCategory}>
-        <label for="category" class="category-label form__label">Catégorie</label>
-    </div>
+	<div class="form__group">
+		<input id="category" class="form__field field category-input" type="text" aria-label="Enter a new category"
+			   placeholder="E.g. Supermarket" bind:value={newCategory}>
+		<label for="category" class="category-label form__label">Catégorie</label>
+	</div>
 </form>

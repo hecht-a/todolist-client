@@ -1,34 +1,34 @@
 <script lang="ts">
-    import Item from "@Components/Item.svelte";
     import { insertLoader } from "@App/insertLoader";
+    import type { Item as IItem } from "@App/types";
+    import Item from "@Components/Item.svelte";
+    import { errorStore, itemsStore, selectedCategoryStore, taskStore } from "@/stores";
+    import { get } from "svelte/store";
 
-    export let cond;
-    export let classes;
-    export let initError;
-    export let openEditTodoModal;
-    export let getItems;
-    export let task;
-    export let selectedCategory;
-    export let deleteTodo;
-    export let setItems;
+    export let cond: IItem[];
+    export let classes: string;
+    export let openEditTodoModal: () => void;
 
-    function toggleDone(id: number) {
-        const { start } = getItems().filter(({ id: itemId }) => itemId === id)[0];
+    const task = get(taskStore);
+    const items = get(itemsStore);
+    const selectedCategory = get(selectedCategoryStore);
+
+    function toggleDone (id: number): void {
+        const { start } = items.filter(({ id: itemId }) => itemId === id)[0];
         if (new Date(start).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0)) {
             return;
         }
 
-        initError({ message: "", color: "" });
-        void insertLoader(".container", async() => {
+        errorStore.set({ message: "", color: "" });
+        void insertLoader(".container", async () => {
             await task.toggleDone(id);
-            setItems(await task.getTasksByCategory(selectedCategory.id));
+            itemsStore.set(await task.getTasksByCategory(selectedCategory.id));
         });
     }
 </script>
 
 <ul class="todo-list {classes}">
     {#each cond.sort((a, b) => Number(new Date(a.start)) - Number(new Date(b.start))) as todo (todo.id)}
-        <Item todo={todo} toggleDone={toggleDone} deleteTodo={deleteTodo} openEditTodoModal={openEditTodoModal}
-              initError={initError}/>
+        <Item todo={todo} toggleDone={toggleDone} openEditTodoModal={openEditTodoModal} />
     {/each}
 </ul>

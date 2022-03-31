@@ -1,53 +1,39 @@
 <script lang="ts">
     import { API_URL } from "@App/config";
+    import { errorStore } from "@/stores";
+    import { get } from "svelte/store";
 
-    let error = "";
+    const error = get(errorStore);
 
-    function register() {
+    function register (): void {
         const form = document.querySelector(".form");
-        const email = form.querySelector<HTMLInputElement>("#email");
-        const password = form.querySelector<HTMLInputElement>("#password");
-        const passwordConfirmation = form.querySelector<HTMLInputElement>("#password_confirmation");
-        if (password.value !== passwordConfirmation.value) {
-            error = "Les mots de passe ne correspondent pas.";
+        const email = form.querySelector<HTMLInputElement>("#email").value;
+        const password = form.querySelector<HTMLInputElement>("#password").value;
+        const passwordConfirmation = form.querySelector<HTMLInputElement>("#password_confirmation").value;
+        if (password !== passwordConfirmation) {
+            errorStore.set({ message:"Les mots de passe ne correspondent pas.", color: "" });
             return;
         }
-        const formData = new FormData();
-        formData.append("email", email.value);
-        formData.append("password", password.value);
-        const xhr = new XMLHttpRequest();
-        xhr.open("POST", `${<string>API_URL}/register`);
-        xhr.send(formData);
-        xhr.onload = () => {
-            const response = JSON.parse(xhr.response);
-            if (response.error) {
-                const mailError = response["errors"].filter((err: { rule: string }) => err.rule === "unique")[0];
-                if (mailError) {
-                    error = "Un utilisateur existe déjà avec cet email.";
-                }
-            }
-        };
-
-        xhr.onloadend = () => {
-            const xhr2 = new XMLHttpRequest();
-            xhr2.open("POST", `${API_URL}/login`);
-            xhr2.send(formData);
-            xhr2.onload = () => {
-                localStorage.setItem("UserData", xhr2.response);
-            };
-            xhr2.onloadend = () => {
-                window.location.href = "/todolist";
-            };
-        };
+        fetch(`${API_URL}/login`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ email, password, passwordConfirmation })
+        }).then((response) => response.json())
+            .then((data) => {
+                localStorage.setItem("token", JSON.stringify(data));
+                window.location.href = "/login";
+            });
     }
 </script>
 
 <div class="form">
     <h1 class="app-title">S'inscrire</h1>
-    {#if error !== ""}
-        <div class="error">{error}</div>
+    {#if error.message !== ""}
+        <div class="error">{error.message}</div>
     {/if}
-    <form on:submit|preventDefault={register}>
+    <form on:submit|preventDefault={() => register()}>
         <div class="form__group">
             <input id="email" class="form__field" type="text" aria-label="Enter a new todo item" placeholder="Email">
             <label for="email" class="form__label">Email</label>

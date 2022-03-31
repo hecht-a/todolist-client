@@ -276,9 +276,9 @@ button {
     align-items: center;
     position: absolute;
     top: 10em;
-    left: 10em;
+    left: 20vw;
     bottom: 10em;
-    right: 10em;
+    right: 20vw;
     z-index: 10;
     background: $grey-2;
     border-radius: 10px;
@@ -453,9 +453,9 @@ button {
         }
 
         .no__events {
-          z-index: 15;
+          //z-index: 15;
           position: absolute;
-          top: 0;
+          top: 8em;
           bottom: 0;
           left: 0;
           right: 0;

@@ -14,7 +14,8 @@
   },
   "plugins": [
     "svelte3",
-    "@typescript-eslint"
+    "@typescript-eslint",
+    "import"
   ],
   "overrides": [
     {
@@ -43,9 +44,14 @@
     "arrow-spacing": "warn",
     "array-bracket-spacing": "warn",
     "comma-spacing": "warn",
-    "space-before-function-paren": ["warn", "never"],
+    "space-before-function-paren": [
+      "warn"
+    ],
     "space-before-blocks": "warn",
-    "object-curly-spacing": ["warn", "always"],
+    "object-curly-spacing": [
+      "warn",
+      "always"
+    ],
     "computed-property-spacing": "warn"
   },
   "settings": {

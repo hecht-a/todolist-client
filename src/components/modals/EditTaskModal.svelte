@@ -1,14 +1,14 @@
 <script lang="ts">
     import { DateTime } from "@App/DateTime";
-    import { Task } from "@App/Task";
-    import type { UserData } from "@App/types";
     import { insertLoader } from "@App/insertLoader";
+    import { Task } from "@App/Task";
+    import type { Category, Error, Item as IItem, User } from "@App/types";
 
-    export let error;
-    export let selectedCategory;
-    export let task;
-    export let initError;
-    export let setItems;
+    export let error: Error;
+    export let selectedCategory: Category;
+    export let task: Task;
+    export let initError: ({ message, color }: Error) => void;
+    export let setItems: (items: IItem[]) => void;
 
     const date = Number(new Date(localStorage.getItem("date"))) || Date.now();
     let newTodo: string;
@@ -16,12 +16,12 @@
     let start: string = new DateTime({ timestamp: date }).format("Y-m-dTH:i");
     let end: string = new DateTime({ timestamp: date }).format("Y-m-dTH:i");
 
-    function closeModal() {
+    function closeModal (): void {
         document.querySelector(".modal").setAttribute("data-visible", "false");
         initError({ message: "", color: "" });
     }
 
-    async function addTodoToCategory() {
+    async function addTodoToCategory (): Promise<void> {
         initError({ message: "", color: "" });
 
         if (newTodo === "" || newTodo === undefined) {
@@ -41,12 +41,12 @@
         fd.append("name", newTodo.trim());
         fd.append("state", String(0));
         fd.append("category", String(selectedCategory.id));
-        fd.append("owner", String((await Task.getLocalStorage<UserData>("UserData")).id));
+        fd.append("owner", String((await Task.getLocalStorage<User>("token")).id));
         fd.append("start", startD.format("Y-m-d H:i"));
         fd.append("end", endD.format("Y-m-d H:i"));
         fd.append("description", description.trim());
 
-        void await insertLoader(".container", async() => {
+        void await insertLoader(".container", async () => {
             setItems(await task.createTask(fd));
         });
 
@@ -63,7 +63,7 @@
         end = new DateTime({ timestamp: Date.now() }).format("Y-m-dTH:i");
     }
 
-    function setDate(e) {
+    function setDate (e): void {
         e.preventDefault();
         if (new Date(start).setHours(0, 0, 0, 0) > new Date(end).setHours(0, 0, 0, 0)) {
             initError({ message: "La date de début doit être inférieure à la date de fin.", color: "#BF616A" });
@@ -104,12 +104,12 @@
                 <label for="description" class="todo-label form__label">Description</label>
             </div>
             <div class="form__group">
-                <input id="start" on:change={setDate} class="form__field field" type="datetime-local"
+                <input id="start" on:change={(e) => setDate(e)} class="form__field field" type="datetime-local"
                        aria-label="Enter a new todo item" placeholder="HH:MM" bind:value={start}>
                 <label for="start" class="todo-label form__label">Start</label>
             </div>
             <div class="form__group">
-                <input id="end" on:change={setDate} class="form__field field" type="datetime-local"
+                <input id="end" on:change={(e) => setDate(e)} class="form__field field" type="datetime-local"
                        aria-label="Enter a new todo item" placeholder="HH:MM" bind:value={end}>
                 <label for="end" class="todo-label form__label">End</label>
             </div>

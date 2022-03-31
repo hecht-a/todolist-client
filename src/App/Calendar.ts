@@ -1,7 +1,7 @@
-import type { Task } from "@App/Task";
 import { DateTime } from "@App/DateTime";
 import { insertLoader } from "@App/insertLoader";
 import { removeChildren } from "@App/removeChildren";
+import type { Task } from "@App/Task";
 import type { Item, Options } from "@App/types";
 
 export class Calendar {
@@ -45,7 +45,7 @@ export class Calendar {
 
     public task: Task;
 
-    constructor(element: HTMLElement, options: Options) {
+    constructor (element: HTMLElement, options: Options) {
         this.task = options.task;
 
         this.date = options.current;
@@ -101,7 +101,7 @@ export class Calendar {
         this.userElement.appendChild(this.calendarWrapper);
     }
 
-    public getDaysInMonth(month: number, year: number): DateTime[] {
+    public getDaysInMonth (month: number, year: number): DateTime[] {
         if ((!month && month !== 0) || (!year && year !== 0)) {
             return;
         }
@@ -116,14 +116,14 @@ export class Calendar {
         return days;
     }
 
-    public formatDateToInit(date: Date): void {
+    public formatDateToInit (date: Date): void {
         if (!date) {
             return;
         }
         date.setHours(0, 0, 0);
     }
 
-    public setDateText(): void {
+    public setDateText (): void {
         const [day, month, date, year] = this.date.toString().split(" ");
         this.dayAsText = day;
         this.monthAsText = month;
@@ -131,13 +131,13 @@ export class Calendar {
         this.yearAsText = year;
     }
 
-    public insertHeaderIntoCalendarWrapper(): void {
+    public insertHeaderIntoCalendarWrapper (): void {
         this.calendarHeaderTitle.textContent = `${Calendar.months[this.month]} - ${this.year}`;
         this.calendarHeader.appendChild(this.calendarHeaderTitle);
         this.calendarWrapper.appendChild(this.calendarHeader);
     }
 
-    public insertCalendarGridDaysHeader(): void {
+    public insertCalendarGridDaysHeader (): void {
         Calendar.days.forEach((day) => {
             const dayElement = document.createElement("span");
             dayElement.textContent = day;
@@ -146,7 +146,7 @@ export class Calendar {
         this.calendarElement.appendChild(this.calendarGridDays);
     }
 
-    public insertNavigationButtons(): void {
+    public insertNavigationButtons (): void {
         const div = document.createElement("div");
         div.classList.add("btn-container");
         this.previousMonthArrow.innerHTML = "&lt;";
@@ -184,7 +184,7 @@ export class Calendar {
         this.calendarHeader.appendChild(this.navigationWrapper);
     }
 
-    public insertDaysIntoGrid(): void {
+    public insertDaysIntoGrid (): void {
         this.calendarGrid.innerHTML = "";
         let days = this.getDaysInMonth(this.month, this.year);
         const firstDayOfMonth = days[0].getDay() === 0 ? 7 : days[0].getDay();
@@ -273,7 +273,7 @@ export class Calendar {
         this.selectedDay = new DateTime({ year: Number(year), month: Number(month) - 1, date: Number(date) });
     }
 
-    public updateCalendar(): void {
+    public updateCalendar (): void {
         this.date = new Date(this.year, this.month);
         this.setDateText();
 
@@ -287,16 +287,16 @@ export class Calendar {
         });
     }
 
-    public onValueChange(callback: (date: Date) => void): void {
+    public onValueChange (callback: (date: Date) => void): void {
         if (this.callback) {
             return this.callback(this.value);
         }
         this.callback = callback;
     }
 
-    public async setTasks(): Promise<void> {
+    public async setTasks (): Promise<void> {
         let tasks: Item[];
-        await insertLoader("main", async() => {
+        await insertLoader("main", async () => {
             tasks = await this.task.getTasks();
         });
 
